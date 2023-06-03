@@ -1,0 +1,56 @@
+name: 'Deploy NodeJS Application'
+
+on:
+  push:
+    branches:
+      - "main"
+
+jobs:
+  build-and-publish:
+    runs-on: ubuntu-latest
+    steps:
+
+      # Checkout the repo
+      - uses: actions/checkout@master
+
+      # Run NodeJS Application Build
+      - name: nodejs build
+        working-directory: 'app'
+        run: |
+          cat index.html      
+
+  deploy-dev:
+    runs-on: 'ubuntu-latest'
+    environment: 'dev'
+    needs: build-and-publish
+    steps:
+      
+      # Checkout the repo
+      - uses: actions/checkout@master
+
+      # Deploy to web app
+      - name: Deploy to Dev WebApp
+        working-directory: 'app'
+        run: |
+          pwd
+          ls -ltr
+          cat index.html
+          echo "Deployed on Dev"
+
+  deploy-prod:
+    runs-on: 'ubuntu-latest'
+    environment: 'prod'
+    needs: [build-and-publish, deploy-dev]
+    steps:
+
+      # Checkout the repo
+      - uses: actions/checkout@master
+
+      # Deploy to web app
+      - name: Deploy to Prod WebApp
+        working-directory: 'app'
+        run: |
+          pwd
+          ls -ltr
+          cat index.html
+          echo "Deployed on Prod"
